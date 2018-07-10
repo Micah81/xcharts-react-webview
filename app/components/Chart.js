@@ -4,22 +4,23 @@ var PropTypes = require('prop-types');
 var api = require('../utils/api');
 import * as V from 'victory';
 import { VictoryCandlestick } from 'victory';
+var vars = require('../utils/robinhood/credentials')
+const regeneratorRuntime = require("regenerator-runtime");
 
-const credentials = {
-      username: '',
-      password: ''
-  }
-
-  function TopStock(credentials){
+var TopStockIs;
+function TopStock(credentials){
     var Robinhood = require('robinhood')(credentials, function(){
         Robinhood.sp500_up(function(err, response, body){
             if(err){
                 console.error(err);
             }else{
               // NEEDS a .then function .....
-                //console.log("sp500_up");
-                //console.log(body.results[0].symbol);
-                return(body.results[0].symbol)
+                console.log("sp500_up");
+                console.log(body.results[0].symbol);
+                //this.updateInstrument(body.results[0].symbol)
+                //return(body.results[0].symbol)
+                TopStockIs = body.results[0].symbol;
+                return(TopStockIs)
             }
         })
     })
@@ -45,25 +46,33 @@ class Chart extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      selectedInstrument: 'AMZN',
+      selectedInstrument: 'WMT',
       chartData: null
     };
 
     this.updateInstrument = this.updateInstrument.bind(this);
   }
 
-
-
   componentDidMount() {
     this.updateInstrument(this.state.selectedInstrument)
 
-    // use RH here to get a popular stock
-this.updateInstrument(TopStock(credentials))
-      //TopStock(credentials)
+    new Promise(function(resolve, reject) {
 
-  }
+      TopStock(vars.credentials)
+
+    }).then(function(result) {
+      console.log("a: ",result)
+      if (this.isMounted()){
+          this.updateInstrument(result)
+      }
 
 
+    });
+}
+
+  componentWillUnmount() {
+    this.isCancelled = true;
+}
 
   updateInstrument(instr) {
     this.setState(function () {
@@ -82,8 +91,6 @@ this.updateInstrument(TopStock(credentials))
       }.bind(this));
   }
 
-
-
   render() {
     return (
       <div>
@@ -95,5 +102,18 @@ this.updateInstrument(TopStock(credentials))
     )
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = Chart;
