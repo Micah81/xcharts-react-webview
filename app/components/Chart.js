@@ -41,7 +41,7 @@ class Chart extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      selectedInstrument: 'WMT',
+      selectedInstrument: null,
       chartData: null
     };
 
@@ -50,19 +50,12 @@ class Chart extends React.Component {
 
   componentDidMount() {
     this.updateInstrument(this.state.selectedInstrument)
-
-    new Promise(function(resolve, reject) {
-
-      resolve(TopStock(vars.credentials))
-
-    }).then(function(result) {
-      console.log("2nd tier")
-      console.log("a: ",result)
-      this.updateInstrument(result)
-
-      return(result)
-
-    })
+    TopStock(vars.credentials).then( (result) => {
+	     //return (this.updateInstrument(result))
+       return(this.setState({
+         selectedInstrument: result
+       }))
+})
 }
 
   componentWillUnmount() {
