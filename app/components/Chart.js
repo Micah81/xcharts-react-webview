@@ -5,26 +5,23 @@ var api = require('../utils/api');
 import * as V from 'victory';
 import { VictoryCandlestick } from 'victory';
 var vars = require('../utils/robinhood/credentials')
-const regeneratorRuntime = require("regenerator-runtime");
 
-var TopStockIs;
-function TopStock(credentials){
+var promise;
+function TopStock(credentials) {
+  return promise = new Promise(function(resolve, reject) {
     var Robinhood = require('robinhood')(credentials, function(){
         Robinhood.sp500_up(function(err, response, body){
             if(err){
                 console.error(err);
             }else{
-              // NEEDS a .then function .....
                 console.log("sp500_up");
                 console.log(body.results[0].symbol);
-                //this.updateInstrument(body.results[0].symbol)
-                //return(body.results[0].symbol)
-                TopStockIs = body.results[0].symbol;
-                return(TopStockIs)
+                resolve(body.results[0].symbol)
             }
         })
     })
-  }
+  })
+}
 
 function ChartRender (props) {
   return (
@@ -39,8 +36,6 @@ function ChartRender (props) {
   </div>
   )
 }
-
-
 
 class Chart extends React.Component {
   constructor(props) {
@@ -58,16 +53,16 @@ class Chart extends React.Component {
 
     new Promise(function(resolve, reject) {
 
-      TopStock(vars.credentials)
+      resolve(TopStock(vars.credentials))
 
     }).then(function(result) {
+      console.log("2nd tier")
       console.log("a: ",result)
-      if (this.isMounted()){
-          this.updateInstrument(result)
-      }
+      this.updateInstrument(result)
 
+      return(result)
 
-    });
+    })
 }
 
   componentWillUnmount() {
@@ -102,18 +97,5 @@ class Chart extends React.Component {
     )
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = Chart;
