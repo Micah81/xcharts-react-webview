@@ -51,12 +51,18 @@ class Chart extends React.Component {
   componentDidMount() {
     this.updateInstrument(this.state.selectedInstrument)
     TopStock(vars.credentials).then( (result) => {
-	     //return (this.updateInstrument(result))
-       return(this.setState({
-         selectedInstrument: result
-       }))
-})
-}
+         this.setState({selectedInstrument: result})
+         return result;
+       }).then((result)=>{ // result is the symbol
+         console.log("result 1: ",result)
+         api.fetchChartData(result)
+console.log("result 1.5: ",result)
+         return result;
+       }).then((result)=>{ // result is undefined //the data
+         console.log("result 2: ",result)
+         this.setState({chartData:result})
+       })
+}//end componentDidMount
 
   componentWillUnmount() {
     this.isCancelled = true;
