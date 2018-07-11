@@ -55,9 +55,7 @@ class Chart extends React.Component {
          return result;
        }).then((result)=>{ // result is the symbol
          console.log("result 1: ",result)
-         api.fetchChartData(result)
-console.log("result 1.5: ",result)
-         return result;
+         return(api.fetchChartData(result))
        }).then((result)=>{ // result is undefined //the data
          console.log("result 2: ",result)
          this.setState({chartData:result})
