@@ -14,9 +14,10 @@ function TopStock(credentials) {
             if(err){
                 console.error(err);
             }else{
-                console.log("sp500_up");
-                console.log(body.results[0].symbol);
+                //console.log("sp500_up");
+                console.log("symbol: ",body.results[0].symbol);
                 resolve(body.results[0].symbol)
+                // Right here is where this data should be cached with Firebase db
             }
         })
     })
@@ -54,10 +55,8 @@ class Chart extends React.Component {
          this.setState({selectedInstrument: result})
          return result;
        }).then((result)=>{ // result is the symbol
-         console.log("result 1: ",result)
          return(api.fetchChartData(result))
-       }).then((result)=>{ // result is undefined //the data
-         console.log("result 2: ",result)
+       }).then((result)=>{ // result is the data
          this.setState({chartData:result})
        })
 }//end componentDidMount
